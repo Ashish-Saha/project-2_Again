@@ -1,0 +1,20 @@
+Header
+Hero Section
+Footer
+
+Task board
+	Search
+	Task action
+	Add Modal
+	Task List
+
+
+Function
+	Search
+	Add Modal
+	Delete All
+	Task List
+	Delete
+	Edit
+	Mark Task / Favorite
+	No Task found
