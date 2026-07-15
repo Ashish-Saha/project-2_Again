@@ -1,16 +1,18 @@
 import { useState } from "react";
 
-export default function TaskModal({ onCloseModal }) {
+export default function TaskModal({ onCloseModal, onCreateTask, updateTask }) {
   const defaultForm = {
     title: "",
+    id: crypto.randomUUID(),
     description: "",
     tags: [],
     priority: "",
     isFavorite: false,
   };
 
-  const [formData, setFormData] = useState(defaultForm);
-  console.log(formData);
+  const [formData, setFormData] = useState(updateTask || defaultForm) ;
+  const [isAdd, setIsAdd] = useState(Object.is(updateTask, null))
+
   const handleForm = (e) => {
     let name = e.target.name;
     let value = e.target.value;
@@ -25,7 +27,7 @@ export default function TaskModal({ onCloseModal }) {
       <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-40"></div>
       <form className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[500px] rounded-xl border border-[#FEFBFB]/[36%] bg-[#191D26] p-9 max-md:px-4 lg:p-11">
         <h2 className="mb-9 text-center text-2xl font-bold text-white lg:mb-11 lg:text-[28px]">
-          Add New Task
+          {isAdd ?  "Add New Task" : "Edit Task"}
         </h2>
 
         <div className="space-y-9 text-white lg:space-y-10">
@@ -44,7 +46,7 @@ export default function TaskModal({ onCloseModal }) {
           <div className="space-y-2 lg:space-y-3">
             <label htmlFor="description">Description</label>
             <textarea
-              className="block min-h-[50px] w-full rounded-md bg-[#2D323F] px-3 py-2.5 lg:min-h-[50px]"
+              className="block min-h-[100px] w-full rounded-md bg-[#2D323F] px-3 py-2.5 lg:min-h-[50px]"
               type="text"
               name="description"
               value={formData.description}
@@ -71,7 +73,7 @@ export default function TaskModal({ onCloseModal }) {
               <select
                 className="block w-full cursor-pointer rounded-md bg-[#2D323F] px-3 py-2.5"
                 name="priority"
-                value={formData.title}
+                value={formData.priority}
                 onChange={handleForm}
                 required
               >
@@ -88,8 +90,12 @@ export default function TaskModal({ onCloseModal }) {
           <button
             type="submit"
             className="rounded bg-blue-600 px-4 py-2 text-white transition-all hover:opacity-80"
+            onClick={(e) => {
+              e.preventDefault();
+              onCreateTask(formData, isAdd);
+            }}
           >
-            Create new Task
+            {isAdd ? "Create new Task" : "Update Task"}
           </button>
 
           <button

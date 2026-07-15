@@ -2,7 +2,7 @@ import { useState } from "react";
 import Search from "./Search";
 import TaskActions from "./TaskActions";
 import TaskLists from "./TaskLists";
-import TaskModal from "./TaskModal"
+import TaskModal from "./TaskModal";
 
 export default function Taskboard() {
   const initialTask = {
@@ -15,22 +15,61 @@ export default function Taskboard() {
     isFavorite: true,
   };
   const [tasks, setTasks] = useState([initialTask]);
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
+  const [taskToUpdate, setTaskToUpdate] = useState(null);
 
-  
+  const handleCreateTask = (formData, isAdd) => {
+    if (isAdd) {
+      setTasks([...tasks, formData]);
+    } else {
+      const update = tasks.map((item) => {
+        if (item.id === formData.id) {
+          return formData;
+        } else {
+          return item;
+        }
+      });
+      setTasks(update);
+      setTaskToUpdate(null)
+    }
+
+    setShowModal(false);
+  };
+
+  const handleEdit = (task) => {
+    setTaskToUpdate(task);
+    setShowModal(true);
+  };
+
+  const handleDelete = (taskId)=>{
+    const deletedTask = tasks.filter(item=>(
+      item.id !== taskId
+    ))
+
+    setTasks(deletedTask)
+  }
 
   return (
     <>
       <section className="mb-20" id="tasks">
-        {showModal && <TaskModal onCloseModal={()=>setShowModal(false)}/>}
+        {showModal && (
+          <TaskModal
+            updateTask={taskToUpdate}
+            onCloseModal={() => {
+              setShowModal(false);
+              setTaskToUpdate(null);
+            }}
+            onCreateTask={handleCreateTask}
+          />
+        )}
         <div className="container">
           <div className="p-2 flex justify-end">
             <Search />
           </div>
 
           <div className="rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16">
-            <TaskActions onAddClick={()=> setShowModal(true)}/>
-            <TaskLists tasks={tasks} />
+            <TaskActions onAddClick={() => setShowModal(true)} />
+            <TaskLists tasks={tasks} onEdit={handleEdit} onDelete={handleDelete}/>
           </div>
         </div>
       </section>
