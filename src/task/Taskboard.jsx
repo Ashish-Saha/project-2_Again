@@ -3,6 +3,7 @@ import Search from "./Search";
 import TaskActions from "./TaskActions";
 import TaskLists from "./TaskLists";
 import TaskModal from "./TaskModal";
+import NoTaskFound from "./NoTaskFound";
 
 export default function Taskboard() {
   const initialTask = {
@@ -30,7 +31,7 @@ export default function Taskboard() {
         }
       });
       setTasks(update);
-      setTaskToUpdate(null)
+      setTaskToUpdate(null);
     }
 
     setShowModal(false);
@@ -41,12 +42,31 @@ export default function Taskboard() {
     setShowModal(true);
   };
 
-  const handleDelete = (taskId)=>{
-    const deletedTask = tasks.filter(item=>(
-      item.id !== taskId
-    ))
+  const handleDelete = (taskId) => {
+    const deletedTask = tasks.filter((item) => item.id !== taskId);
 
-    setTasks(deletedTask)
+    setTasks(deletedTask);
+  };
+
+  const handleFav = (taskId) => {
+    const taskIndex = tasks.findIndex((task) => task.id === taskId);
+    const newTask = [...tasks];
+    newTask[taskIndex].isFavorite = !newTask[taskIndex].isFavorite
+
+    setTasks(newTask)
+  };
+
+  const handleDeleteAll = () => {
+    tasks.length = 0;
+    setTasks([...tasks]);
+  };
+
+
+  const handleSearch = (searchTerm)=>{
+    const searchResult= tasks.filter(item=>(
+        item.title.toLowerCase().includes(searchTerm.toLowerCase())
+    ))
+    setTasks([...searchResult])
   }
 
   return (
@@ -64,12 +84,27 @@ export default function Taskboard() {
         )}
         <div className="container">
           <div className="p-2 flex justify-end">
-            <Search />
+            <Search handleSearch={handleSearch}/>
           </div>
 
           <div className="rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16">
-            <TaskActions onAddClick={() => setShowModal(true)} />
-            <TaskLists tasks={tasks} onEdit={handleEdit} onDelete={handleDelete}/>
+            <TaskActions
+              onAddClick={() => {
+                setShowModal(true);
+              }}
+              onDeleteAll={handleDeleteAll}
+            />
+            {
+              tasks.length > 0 ?
+              (<TaskLists
+              tasks={tasks}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onFav={handleFav}
+            />) 
+            :
+            (<NoTaskFound/>)
+            }
           </div>
         </div>
       </section>

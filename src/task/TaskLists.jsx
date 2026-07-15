@@ -1,6 +1,6 @@
 import { IoIosStar } from "react-icons/io";
 
-export default function TaskLists({ tasks, onEdit, onDelete }) {
+export default function TaskLists({ tasks, onEdit, onDelete, onFav }) {
   return (
     <>
       <div className="overflow-auto">
@@ -37,12 +37,14 @@ export default function TaskLists({ tasks, onEdit, onDelete }) {
                 className="border-b border-[#2E3443] [&>td]:align-baseline [&>td]:px-4 [&>td]:py-2"
               >
                 <td>
-                  {/* Star Icon */}
-                  {task.isFavorite ? (
-                    <IoIosStar color="yellow" />
-                  ) : (
-                    <IoIosStar color="gray" />
-                  )}
+                  <button onClick={()=>onFav(task.id)}>
+                    {/* Star Icon */}
+                    {task.isFavorite ? (
+                      <IoIosStar color="yellow" />
+                    ) : (
+                      <IoIosStar color="gray" />
+                    )}
+                  </button>
                 </td>
                 <td>{task.title}</td>
                 <td className="break-words whitespace-normal">
@@ -62,7 +64,12 @@ export default function TaskLists({ tasks, onEdit, onDelete }) {
                 <td className="text-center">{task.priority}</td>
                 <td>
                   <div className="flex items-center justify-center space-x-3">
-                    <button className="text-red-500" onClick={()=> onDelete(task.id)}>Delete</button>
+                    <button
+                      className="text-red-500"
+                      onClick={() => onDelete(task.id)}
+                    >
+                      Delete
+                    </button>
                     <button
                       className="text-blue-500"
                       onClick={() => onEdit(task)}
